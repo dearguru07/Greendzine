@@ -1,25 +1,30 @@
-import React from "react";
+import React, { useState } from 'react';
+import Login from './login';
+import Dashboard from './dashboard';
+import ResendOTP from './resendOtp';
 
-const AppLayOut=()=>{
-  function generateOTP() {
-    const otp = generateOTP();
-    alert(`Your OTP is: ${otp}`);
-    return Math.floor(100000 + Math.random() * 900000);
-  }
-  // generateOTP()
-  function validateOTP(enteredOTP) {
-    const storedOTP = localStorage.getItem('otp');
-    return enteredOTP === storedOTP;
-  }
-  setTimeout(() => {
-    localStorage.removeItem('otp');
-    alert('OTP expired. Please request a new one.');
-  }, 30000);
-  return <div>
-    <div id="login">
-  <input type="text" id="otpInput" placeholder="Enter OTP" />
-  <button onClick={validateOTP}>Submit</button>
-</div>
-  </div>
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowResend(false);
+  };
+
+  const handleLoginFailure = () => {
+    setShowResend(true);
+  };
+
+  return (
+    <div>
+      {!isLoggedIn && !showResend && (
+        <Login onSuccess={handleLoginSuccess} onFailure={handleLoginFailure} />
+      )}
+      {isLoggedIn && <Dashboard />}
+      {showResend && <ResendOTP onResend={() => setShowResend(false)} />}
+    </div>
+  );
 }
-export default AppLayOut;
+
+export default App;
